@@ -1,4 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+  // === CAMBIO DE TEMA (CLARO/OSCURO) ===
+  const themeToggle = document.getElementById('themeToggle');
+
+  function aplicarTemaGuardado() {
+      let temaGuardado = localStorage.getItem('theme');
+      if (!temaGuardado) {
+          temaGuardado = 'dark'; // Tema por defecto
+      }
+      document.documentElement.setAttribute('data-theme', temaGuardado);
+  }
+
+  function cambiarTema() {
+      let temaActual = document.documentElement.getAttribute('data-theme');
+      if (temaActual === 'light') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+      } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+      }
+  }
+
+  if (themeToggle) {
+      themeToggle.addEventListener('click', cambiarTema);
+  }
+
+  aplicarTemaGuardado();
+
+
+  // === CÓDIGO DEL CARRITO ===
   const btnCart = document.getElementById('btnCart');
   const drawer = document.getElementById('drawer');
   const closeCart = document.getElementById('closeCart');
@@ -18,7 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function actualizarContador() {
-    const total = cart.reduce((s, i) => s + (i.qty || 0), 0);
+    const total = cart.reduce(function(s, i) {
+      return s + (i.qty || 0);
+    }, 0);
     if (cartCount) cartCount.textContent = total;
   }
 
@@ -26,7 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!cartItems) return;
     cartItems.innerHTML = '';
     let subtotal = 0;
-    cart.forEach(item => {
+
+    cart.forEach(function(item) {
       subtotal += item.price * item.qty;
       const div = document.createElement('div');
       div.className = 'item';
@@ -41,42 +75,47 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
       cartItems.appendChild(div);
     });
+
     const iva = subtotal * 0.12;
     const total = subtotal + iva;
+
     if (subtotalEl) subtotalEl.textContent = `Q${subtotal.toFixed(2)}`;
     if (ivaEl) ivaEl.textContent = `Q${iva.toFixed(2)}`;
     if (totalEl) totalEl.textContent = `Q${total.toFixed(2)}`;
+
     actualizarContador();
     guardarCarrito();
 
-    cartItems.querySelectorAll('[data-action]').forEach(btn => {
+    const botones = cartItems.querySelectorAll('[data-action]');
+    botones.forEach(function(btn) {
       btn.onclick = function() {
         const id = this.dataset.id;
         const action = this.dataset.action;
-        const item = cart.find(i => i.id === id);
+        const item = cart.find(function(i) { return i.id === id; });
         if (!item) return;
         if (action === 'plus') item.qty++;
         if (action === 'minus') {
           item.qty--;
-          if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+          if (item.qty <= 0) cart = cart.filter(function(i) { return i.id !== id; });
         }
         renderCart();
       };
     });
   }
 
-  if (btnCart && drawer) btnCart.onclick = () => drawer.classList.add('open');
-  if (closeCart && drawer) closeCart.onclick = () => drawer.classList.remove('open');
-  if (clearCartBtn) clearCartBtn.onclick = () => { cart = []; renderCart(); };
+  if (btnCart && drawer) btnCart.onclick = function() { drawer.classList.add('open'); };
+  if (closeCart && drawer) closeCart.onclick = function() { drawer.classList.remove('open'); };
+  if (clearCartBtn) clearCartBtn.onclick = function() { cart = []; renderCart(); };
 
-  document.querySelectorAll('[data-add]').forEach(btn => {
+  const botonesAgregar = document.querySelectorAll('[data-add]');
+  botonesAgregar.forEach(function(btn) {
     btn.onclick = function() {
       const id = String(this.dataset.add);
       const card = this.closest('.card');
       const name = card ? (card.querySelector('.name')?.innerText || 'Producto') : 'Producto';
       const priceText = card ? (card.querySelector('.price')?.textContent.replace('Q','') || '0') : '0';
       const price = parseFloat(priceText) || 0;
-      const existing = cart.find(i => i.id === id);
+      const existing = cart.find(function(i) { return i.id === id; });
       if (existing) existing.qty++;
       else cart.push({id, name, price, qty:1});
       renderCart();
@@ -107,9 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const cleanUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
       history.replaceState({}, '', cleanUrl);
-      if (!grid) {
-        return;
-      }
+      if (!grid) return;
 
       try {
         const resp = await fetch(cleanUrl, {
@@ -123,20 +160,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const newGrid = doc.getElementById('grid');
         if (newGrid) {
           grid.innerHTML = newGrid.innerHTML;
-          document.querySelectorAll('[data-add]').forEach(btn => {
+          const nuevosBotones = document.querySelectorAll('[data-add]');
+          nuevosBotones.forEach(function(btn) {
             btn.onclick = function() {
               const id = String(this.dataset.add);
               const card = this.closest('.card');
               const name = card ? (card.querySelector('.name')?.innerText || 'Producto') : 'Producto';
               const priceText = card ? (card.querySelector('.price')?.textContent.replace('Q','') || '0') : '0';
               const price = parseFloat(priceText) || 0;
-              const existing = cart.find(i => i.id === id);
+              const existing = cart.find(function(i) { return i.id === id; });
               if (existing) existing.qty++;
               else cart.push({id, name, price, qty:1});
               renderCart();
             };
           });
-        } else {
         }
       } catch (err) {
         console.warn('No se actualizó grid vía fetch:', err);
