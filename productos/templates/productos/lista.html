@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>• Tienda de Electrónica</title>
+    <title>Tienda de Electrónica</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'productos/style.css' %}">
 </head>
@@ -18,48 +18,63 @@
         <div class="spacer"></div>
         <button id="btnCart" class="pill eco">🛒 Carrito <span id="cartCount" class="cart-count">0</span></button>
     </div>
+<form class="toolbar" method="get" action=".">
+    <div class="control">
+        <input type="search" name="q" id="q" placeholder="Buscar (modelo, etiqueta, uso)" value="{{ request.GET.q }}">
+    </div>
+    <div class="control">
+        <select name="type" id="type">
+    <option value="">Categoría</option>
+    <option value="Computadora" {% if request.GET.type == "Computadora" %}selected{% endif %}>Computadora</option>
+    <option value="Smartphone" {% if request.GET.type == "Smartphone" %}selected{% endif %}>Smartphone</option>
+    <option value="Audifonos" {% if request.GET.type == "Audifonos" %}selected{% endif %}>Audífonos</option>
+    <option value="TV" {% if request.GET.type == "TV" %}selected{% endif %}>TV</option>
+    <option value="Consola" {% if request.GET.type == "Consola" %}selected{% endif %}>Consola</option>
+    <option value="Accesorio" {% if request.GET.type == "Accesorio" %}selected{% endif %}>Accesorio</option>
+    <option value="Microcontrolador" {% if request.GET.type == "Microcontrolador" %}selected{% endif %}>Microcontrolador</option>
+</select>
 
-    <div class="toolbar">
-        <div class="control">
-            <input type="search" id="q" placeholder="Buscar (modelo, etiqueta, uso)">
-        </div>
-        <div class="control">
-            <select id="type">
-                <option value="">Categoría (todas)</option>
-                <option value="computadora">Computadora</option>
-                <option value="smartphone">Smartphone</option>
-                <option value="audifonos">Audífonos</option>    
-                <option value="tv">TV</option>
-                <option value="consola">Consola</option>
-                <option value="accesorio">Accesorio</option>
-            </select>
+<select name="brand" id="brand">
+    <option value="">Marca</option>
+    <option value="Apple" {% if request.GET.brand == "Apple" %}selected{% endif %}>Apple</option>
+    <option value="Samsung" {% if request.GET.brand == "Samsung" %}selected{% endif %}>Samsung</option>
+    <option value="Sony" {% if request.GET.brand == "Sony" %}selected{% endif %}>Sony</option>
+    <option value="Logitech" {% if request.GET.brand == "Logitech" %}selected{% endif %}>Logitech</option>
+    <option value="Xiaomi" {% if request.GET.brand == "Xiaomi" %}selected{% endif %}>Xiaomi</option>
+    <option value="Arduino" {% if request.GET.brand == "Arduino" %}selected{% endif %}>Arduino</option>
+</select>
+    </div>
 
-            <select id="brand">
-                <option value="">Marca (todas)</option>
-                <option value="apple">Apple</option>
-                <option value="samsung">Samsung</option>
-                <option value="sony">Sony</option>
-                <option value="logitech">Logitech</option>
-                <option value="xiaomi">Xiaomi</option>
-            </select>
-        </div>
-        <div class="control">
-            <input type="number" id="min" placeholder="Precio mín (GTQ)">
-            <input type="number" id="max" placeholder="Precio máx (GTQ)">
-        </div>
-        <div class="control">
-            <select id="sort">
-                <option value="pop">Ordenar: Popularidad</option>
-                <option value="priceAsc">Precio ↑</option>
-                <option value="priceDesc">Precio ↓</option>
-                <option value="rating">Mejor valoración</option>
-            </select>
-            <div class="checks">
-                <label class="small"><input type="checkbox" id="nuevo"> Productos Nuevos</label>
-                <label class="small"><input type="checkbox" id="usado"> Productos Usados</label>
-            </div>
+    <div class="control">
+        <input type="number" name="min" id="min" placeholder="Precio mín (GTQ)" value="{{ request.GET.min }}">
+        <input type="number" name="max" id="max" placeholder="Precio máx (GTQ)" value="{{ request.GET.max }}">
+    </div>
+
+    <div class="control">
+        <select name="sort" id="sort">
+            <option value="pop" {% if request.GET.sort == "pop" %}selected{% endif %}>Ordenar: Popularidad</option>
+            <option value="priceAsc" {% if request.GET.sort == "priceAsc" %}selected{% endif %}>Precio ↑</option>
+            <option value="priceDesc" {% if request.GET.sort == "priceDesc" %}selected{% endif %}>Precio ↓</option>
+            <option value="rating" {% if request.GET.sort == "rating" %}selected{% endif %}>Mejor valoración</option>
+        </select>
+
+        <div class="checks">
+            <label class="small">
+                <input type="checkbox" name="nuevo" id="nuevo" {% if request.GET.nuevo %}checked{% endif %}> Nuevos
+            </label>
+            <label class="small">
+                <input type="checkbox" name="usado" id="usado" {% if request.GET.usado %}checked{% endif %}> Usados
+            </label>
         </div>
     </div>
+
+    <div class="control">
+        <button type="submit" class="btn eco">Filtrar</button>
+        <button type="button" id="limpiarF" class="pill">Eliminar filtrado</button>
+
+    </div>
+</form>
+
 </header>
 
 <main>
@@ -69,12 +84,26 @@
             <img class="thumb" src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
             <div class="info">
                 <div class="name">{{ p.nombre }}</div>
+                <div class="desc">{{ p.descripcion }}</div>
+                <div class="tag">{{ p.categoria }}</div>
+                <div class="tag">{{ p.marca }}</div>
+                <div class="tag">{{ p.estado|title }}</div>
                 <div class="tags">
-                    <span class="tag">{{ p.tipo }}</span>
-                    {% if p.gama_alta %}<span class="tag">Gama Alta</span>{% endif %}
-                    {% if p.portatil %}<span class="tag">Portátil</span>{% endif %}
-                    {% for t in p.tags %}<span class="tag">{{ t }}</span>{% endfor %}
-                </div>
+    {% if p.tipo %}
+        <span class="tag">{{ p.tipo }}</span>
+    {% endif %}
+    {% if p.gama_alta %}
+        <span class="tag">Gama Alta</span>
+    {% endif %}
+    {% if p.portatil %}
+        <span class="tag">Portátil</span>
+    {% endif %}
+    {% for t in p.tags %}
+        {% if t %}
+            <span class="tag">{{ t }}</span>
+        {% endif %}
+    {% endfor %}
+</div>
                 <div class="row">
                     <div class="stars" title="{{ p.valoracion|floatformat:1 }} / 5">
                         {% for i in "12345" %}
@@ -97,8 +126,6 @@
         {% endfor %}
     </div>
 </main>
-
-<!-- Drawer Carrito -->
 <aside id="drawer" class="drawer" aria-hidden="true">
     <header>
         <div class="topbar" style="padding:0">
@@ -118,8 +145,6 @@
         </div>
     </footer>
 </aside>
-
-<!-- Modal Detalle -->
 <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal">
         <div class="topbar" style="padding:10px 12px; border-bottom:1px solid var(--line)">
@@ -145,6 +170,6 @@
     </div>
 </div>
 
-<script src="{% static 'productos/app.js' %}"></script>
+<script src="{% static 'productos/app.js' %}?v=1.2"></script>
 </body>
 </html>
