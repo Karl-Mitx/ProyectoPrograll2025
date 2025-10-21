@@ -35,3 +35,17 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class CarouselImage(models.Model):
+    titulo = models.CharField(max_length=100, blank=True)
+    descripcion = models.TextField(blank=True)
+    imagen = models.ImageField(upload_to='carousel/')
+    enlace = models.URLField(blank=True, help_text="URL al que redirige al hacer click, opcional")
+    activo = models.BooleanField(default=True)
+    orden = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return self.titulo or f"Imagen {self.id}"

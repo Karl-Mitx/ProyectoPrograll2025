@@ -8,11 +8,9 @@
     <link rel="stylesheet" href="{% static 'productos/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    
-    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
 <body>
-    
 
 <header>
     <div class="topbar">
@@ -82,25 +80,41 @@
         </div>
     </form>
 </header>
-<!-- Carrusel -->
-<div class="carousel">
-    <div class="carousel-track">
-        {% for img in carousel_images %}
-        <div class="carousel-slide {% if forloop.first %}active{% endif %}">
-            {% if img.enlace %}
-                <a href="{{ img.enlace }}">
-                    <img src="{{ img.imagen.url }}" alt="{{ img.titulo }}">
-                </a>
-            {% else %}
-                <img src="{{ img.imagen.url }}" alt="{{ img.titulo }}">
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
-    <button class="carousel-button prev">‹</button>
-    <button class="carousel-button next">›</button>
-</div>
 
+<!-- Carrusel -->
+<div class="container-fluid p-0">
+    {% if carousel_images %}
+    <div id="header-carousel" class="carousel slide" data-ride="carousel" data-interval="4000">
+        <div class="carousel-inner">
+            {% for img in carousel_images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                {% if img.enlace %}
+                    <a href="{{ img.enlace }}">
+                        <img class="w-100" src="{{ img.imagen.url }}" alt="{{ img.titulo }}">
+                    </a>
+                {% else %}
+                    <img class="w-100" src="{{ img.imagen.url }}" alt="{{ img.titulo }}">
+                {% endif %}
+                {% if img.titulo or img.descripcion %}
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="caption-glass" style="max-width:900px;">
+                        {% if img.titulo %}<h4 class="text-white text-uppercase mb-md-2">{{ img.titulo }}</h4>{% endif %}
+                        {% if img.descripcion %}<h1 class="display-4 text-white mb-md-3">{{ img.descripcion }}</h1>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#header-carousel" role="button" data-slide="prev">
+            <div class="btn btn-dark" style="width:45px;height:45px;"><span class="carousel-control-prev-icon mb-n2"></span></div>
+        </a>
+        <a class="carousel-control-next" href="#header-carousel" role="button" data-slide="next">
+            <div class="btn btn-dark" style="width:45px;height:45px;"><span class="carousel-control-next-icon mb-n2"></span></div>
+        </a>
+    </div>
+    {% endif %}
+</div>
 
 <main>
     <div id="grid" class="grid">
@@ -140,53 +154,12 @@
         {% endfor %}
     </div>
 </main>
-<aside id="drawer" class="drawer" aria-hidden="true">
-</aside>
-<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
-</div>
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-section">
-      <h2 class="footer-logo">ElecTRON</h2>
-      <p>Lo mejor en productos electrónicos, componentes y tecnología de punta.</p>
-    </div>
-    <div class="footer-section">
-      <h3>Enlaces rápidos</h3>
-      <ul>
-        <li><a href="#">Inicio</a></li>
-        <li><a href="#">Tienda</a></li>
-        <li><a href="#">Ofertas</a></li>
-        <li><a href="#">Contacto</a></li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h3>Categorías</h3>
-      <ul>
-        <li><a href="#">Componentes</a></li>
-        <li><a href="#">Accesorios</a></li>
-        <li><a href="#">Computadoras</a></li>
-        <li><a href="#">Audio y Video</a></li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h3>Contáctanos</h3>
-      <ul>
-        <li>📍 Puerto Barrios, Izabal</li>
-        <li>📞 +502 5986-1872</li>
-        <li>✉️ contacto@electron.com</li>
-      </ul>
-      <div class="footer-social">
-        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="#" aria-label="X Twitter"><i class="fab fa-x-twitter"></i></a>
-      </div>
-    </div>
-  <div class="footer-bottom">
-    &copy; 2025 ElecTRON. Todos los derechos reservados.
-  </div>
-</footer>
 
+<aside id="drawer" class="drawer" aria-hidden="true"></aside>
+<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true"></div>
+<footer class="footer"></footer>
 
+<!-- Scripts JS -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'productos/app.js' %}?v=1.2"></script>

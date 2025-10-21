@@ -1,50 +1,45 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Producto
-from django.db.models import Q
+from django.shortcuts import render
+from .models import Producto, CarouselImage
 
 def lista_productos(request):
-    
+    """
+    Vista principal para mostrar los productos y el carrusel en la página de inicio.
+    """
     productos = Producto.objects.all()
 
-    q = request.GET.get('q', '').strip()
-    categoria = request.GET.get('type', '').strip()
-    marca = request.GET.get('brand', '').strip()
-    precio_min = request.GET.get('min', '').strip()
-    precio_max = request.GET.get('max', '').strip()
+    q = request.GET.get('q', '')
+    tipo = request.GET.get('type', '')
+    marca = request.GET.get('brand', '')
+    min_precio = request.GET.get('min', '')
+    max_precio = request.GET.get('max', '')
     nuevo = request.GET.get('nuevo')
     usado = request.GET.get('usado')
     sort = request.GET.get('sort', '')
 
     if q:
-        productos = productos.filter(
-            Q(nombre__icontains=q) |
-            Q(descripcion__icontains=q)
-        )
+        productos = productos.filter(nombre__icontains=q) | productos.filter(descripcion__icontains=q)
 
-    if categoria:
-        productos = productos.filter(categoria__iexact=categoria)
+    if tipo:
+        productos = productos.filter(categoria__iexact=tipo)
 
     if marca:
+        productos = productos.filter(marca__iexact=marca)
+
+    if min_precio:
         try:
-            productos = productos.filter(marca__nombre__iexact=marca)
-        except Exception:
-            productos = productos.filter(marca__iexact=marca)
+            productos = productos.filter(precio__gte=float(min_precio))
+        except ValueError:
+            pass
 
-    try:
-        if precio_min != '':
-            productos = productos.filter(precio__gte=float(precio_min))
-    except ValueError:
-        pass
-
-    try:
-        if precio_max != '':
-            productos = productos.filter(precio__lte=float(precio_max))
-    except ValueError:
-        pass
+    if max_precio:
+        try:
+            productos = productos.filter(precio__lte=float(max_precio))
+        except ValueError:
+            pass
 
     if nuevo and not usado:
         productos = productos.filter(estado__iexact='nuevo')
-    if usado and not nuevo:
+    elif usado and not nuevo:
         productos = productos.filter(estado__iexact='usado')
 
     if sort == 'priceAsc':
@@ -56,7 +51,11 @@ def lista_productos(request):
     else:
         productos = productos.order_by('-id')
 
-    return render(request, 'productos/lista.html', {
+    carousel_images = CarouselImage.objects.all()
+
+    context = {
         'productos': productos,
-        'request': request,
-    })
+        'carousel_images': carousel_images
+    }
+
+    return render(request, 'productos/lista.html', context)
