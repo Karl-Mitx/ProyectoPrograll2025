@@ -206,4 +206,40 @@ setInterval(() => {
 
 
   renderCart();
+
+  document.querySelectorAll('[data-scroll]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sel = this.getAttribute('data-scroll');
+      var el = document.querySelector(sel);
+      if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  (function(){
+    const rail = document.getElementById('rail-ofertas');
+    if(!rail) return;
+
+    const prev = rail.parentElement.querySelector('.rail-btn.prev');
+    const next = rail.parentElement.querySelector('.rail-btn.next');
+    const step = 260;
+
+    function scrollByStep(dir){ rail.scrollBy({left: dir*step, behavior:'smooth'}); }
+    prev?.addEventListener('click', ()=>scrollByStep(-1));
+    next?.addEventListener('click', ()=>scrollByStep(1));
+
+    rail.querySelectorAll('.mini-card').forEach(function(card){
+      const priceEl = card.querySelector('.mini-card__price strong');
+      const strEl = card.querySelector('.mini-card__price .str');
+      const badge = card.querySelector('.mini-card__badge');
+      if(priceEl && strEl && badge){
+        const p = parseFloat(priceEl.textContent.replace(/[^\d.]/g,'') || '0');
+        const o = parseFloat(strEl.textContent.replace(/[^\d.]/g,'') || '0');
+        if(o > p && o > 0){
+          const pct = Math.round((1 - (p/o)) * 100);
+          badge.textContent = `-${pct}%`;
+        }
+      }
+    });
+  })();
+
 });
