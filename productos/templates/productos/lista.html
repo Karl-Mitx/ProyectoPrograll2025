@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Tienda de Electrónica</title>
+    <title>ElecTRON - Tienda de Electrónica</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'productos/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -101,19 +101,20 @@
 </div>
 
 <section class="promo-strip">
-  <a href="#" class="promo-pill">
-    <div class="promo-pill__label">
-      <strong>iPhone 17 PRO</strong> PREVENTA
-    </div>
-    <span class="promo-pill__cta">Ver aquí</span>
-  </a>
-
-  <a href="#" class="promo-pill soft">
-    <div class="promo-pill__label">
-      <strong>DESCUBRE LO NUEVO</strong> – Hogar • Deportes • Bebés
-    </div>
-    <span class="promo-pill__cta">Ver más</span>
-  </a>
+  {% for pill in promo_pills %}
+    <a href="{{ pill.enlace|default:'#' }}"
+       class="promo-pill{% if pill.variante == 'soft' %} soft{% endif %}">
+      <div class="promo-pill__label">
+        {{ pill.label_html|safe }}
+      </div>
+      <span class="promo-pill__cta">{{ pill.cta_text }}</span>
+    </a>
+  {% empty %}
+    <a href="#" class="promo-pill">
+      <div class="promo-pill__label"><strong>iPhone 17 PRO</strong> PREVENTA</div>
+      <span class="promo-pill__cta">Ver aquí</span>
+    </a>
+  {% endfor %}
 </section>
 
 <section class="promo-grid" aria-label="Promociones destacadas">
@@ -191,6 +192,56 @@
     <button class="rail-btn next" aria-label="Siguiente">›</button>
   </div>
 </section>
+<section class="featured">
+  <div class="featured__head">
+    <h2 class="featured__title">🎮 Vive la experiencia gamer</h2>
+    <a href="{% url 'productos_todos' %}?type=Consola" class="btn eco">Ver todos</a>
+  </div>
+
+  <div class="featured__rail">
+    <button class="rail-btn prev" aria-label="Anterior">‹</button>
+
+    <div class="rail" id="rail-gamer">
+      {% for p in gamer_products %}
+      <article class="mini-card">
+        <a class="mini-card__img" href="#">
+          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+          {% comment %} Badge de descuento (lo calculamos con JS) {% endcomment %}
+          {% if p.precio_original %}
+            <span class="mini-card__badge"
+                  data-old="{{ p.precio_original }}"
+                  data-new="{{ p.precio }}">-%</span>
+          {% endif %}
+        </a>
+
+        <div class="mini-card__body">
+          <div class="mini-card__brand">
+            Marca: <a href="?brand={{ p.marca|urlencode }}">{{ p.marca }}</a>
+          </div>
+
+          <a class="mini-card__name name" href="#">{{ p.nombre }}</a>
+
+          <div class="mini-card__price">
+            <strong class="price">Q{{ p.precio }}</strong>
+            {% if p.precio_original %}
+              <span class="str">Q{{ p.precio_original }}</span>
+            {% endif %}
+          </div>
+
+          <div class="mini-card__cta">
+            <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+        <p>Sin productos gamer por ahora.</p>
+      {% endfor %}
+    </div>
+
+    <button class="rail-btn next" aria-label="Siguiente">›</button>
+  </div>
+</section>
+
 
 <aside id="drawer" class="drawer" aria-hidden="true">
   <header style="display:flex;align-items:center;justify-content:space-between;padding:12px;">
@@ -212,8 +263,44 @@
     </div>
   </footer>
 </aside>
-
 <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true"></div>
+
+<section class="usps">
+  <div class="usps__grid">
+    <article class="usps__item">
+      <div class="usps__icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="usps__body">
+        <strong class="usps__title">Compra 100% segura</strong>
+        <div class="usps__desc">Con encriptación SSL</div>
+      </div>
+    </article>
+
+    <article class="usps__item">
+      <div class="usps__icon"><i class="fa-solid fa-headset"></i></div>
+      <div class="usps__body">
+        <strong class="usps__title">¿Necesitas asistencia?</strong>
+        <div class="usps__desc">Contáctanos al 5986-1872</div>
+      </div>
+    </article>
+
+    <article class="usps__item">
+      <div class="usps__icon"><i class="fa-solid fa-rotate-left"></i></div>
+      <div class="usps__body">
+        <strong class="usps__title">Devolución o reembolso</strong>
+        <div class="usps__desc">Hasta 15 días</div>
+      </div>
+    </article>
+
+    <article class="usps__item">
+      <div class="usps__icon"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="usps__body">
+        <strong class="usps__title">Envíos en 48 horas</strong>
+        <div class="usps__desc">Gratis recoger en tienda</div>
+      </div>
+    </article>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-section">

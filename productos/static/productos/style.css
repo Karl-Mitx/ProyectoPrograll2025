@@ -707,3 +707,92 @@ html[data-theme="dark"] .mini-card__img{ background:#0f172a; }
   padding:8px 12px;
   border-radius:999px;
 }
+
+/* ===== Partners / Servicios ===== */
+.partners{
+  max-width:1200px;
+  margin:36px auto 18px;
+  padding:0 12px;
+}
+.partners__grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:28px;
+}
+@media (max-width:1000px){
+  .partners__grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:560px){
+  .partners__grid{ grid-template-columns:1fr; }
+}
+.partners__item{
+  text-align:center;
+  padding:22px 12px;
+  background:var(--card-bg);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+.partners__logo{
+  width:auto;
+  height:70px;             /* ajusta según tu logo */
+  object-fit:contain;
+  margin:0 auto 12px;
+  display:block;
+  filter: none;            /* puedes usar brightness(.9) si quieres “suavizar” */
+}
+.partners__text{
+  color:var(--text);
+  opacity:.85;
+  line-height:1.4;
+  max-width:36ch;
+  margin:0 auto;
+  font-size:.95rem;
+}
+
+/* ===== Ventajas (USPs) ===== */
+.usps{
+  max-width:1200px;
+  margin:10px auto 36px;
+  padding:0 12px;
+}
+.usps__grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--card-bg);
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+@media (max-width:900px){
+  .usps__grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:560px){
+  .usps__grid{ grid-template-columns:1fr; }
+}
+.usps__item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  border-right:1px solid var(--line);
+}
+.usps__item:nth-child(4n){ border-right:none; }
+@media (max-width:900px){
+  .usps__item{ border-right:none; border-bottom:1px solid var(--line); }
+  .usps__item:last-child{ border-bottom:none; }
+}
+.usps__icon{
+  width:46px; height:46px;
+  border-radius:50%;
+  display:grid; place-items:center;
+  background:var(--secondary);
+  border:1px solid var(--line);
+  flex:0 0 auto;
+  font-size:1.1rem;
+  color:var(--text);
+}
+.usps__body{ line-height:1.25; }
+.usps__title{ font-weight:800; display:block; }
+.usps__desc{ color:var(--text); opacity:.7; font-size:.92rem; }

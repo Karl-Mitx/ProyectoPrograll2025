@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+from urllib.parse import urlencode
 
 class Producto(models.Model):
     CATEGORIAS = [
@@ -154,7 +156,14 @@ class CarouselImage(models.Model):
     enlace = models.URLField(blank=True, help_text="URL al que redirige al hacer click, opcional")
     activo = models.BooleanField(default=True)
     orden = models.PositiveIntegerField(default=0)
-    
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return self.titulo or f"Imagen {self.id}"
+
+
 class PromoCard(models.Model):
     BADGE_STYLES = [
         ('solid', 'Sólido'),
@@ -166,6 +175,7 @@ class PromoCard(models.Model):
     badge_style = models.CharField(max_length=10, choices=BADGE_STYLES, default='solid')
     cta_text = models.CharField(max_length=40, default='Ver ofertas')
     enlace = models.URLField(blank=True)
+
     imagen = models.ImageField(upload_to='promos/', blank=True, null=True)
 
     gradiente_clase = models.CharField(
@@ -188,8 +198,39 @@ class PromoCard(models.Model):
         return self.titulo
 
 
+class PromoPill(models.Model):
+    VARIANTES = [
+        ('default', 'Default'),
+        ('soft', 'Soft'),
+    ]
+
+    label_html = models.CharField(max_length=180)
+    cta_text = models.CharField(max_length=40, default='Ver más')
+    enlace = models.URLField(blank=True)    
+    variante = models.CharField(max_length=10, choices=VARIANTES, default='default')
+
+    filtro_q = models.CharField(max_length=120, blank=True)
+    filtro_brand = models.CharField(max_length=40, blank=True)
+
+    activo = models.BooleanField(default=True)
+    orden = models.PositiveIntegerField(default=0)
+
     class Meta:
         ordering = ['orden']
 
     def __str__(self):
-        return self.titulo or f"Imagen {self.id}"
+        return f"Pill: {self.label_html[:40]}"
+
+    def get_url(self):
+
+        if self.enlace:
+            return self.enlace
+        
+        params = {}
+        if self.filtro_q:
+            params['q'] = self.filtro_q
+        if self.filtro_brand:
+            params['brand'] = self.filtro_brand
+
+        base = reverse('productos_todos')
+        return f"{base}?{urlencode(params)}" if params else base

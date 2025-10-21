@@ -252,6 +252,49 @@ setInterval(() => {
     const rail = document.getElementById('rail-ofertas');
     if(!rail) return;
 
+(function(){
+  const rail = document.getElementById('rail-gamer');
+  if(!rail) return;
+
+  const prev = rail.parentElement.querySelector('.rail-btn.prev');
+  const next = rail.parentElement.querySelector('.rail-btn.next');
+  const step = 260;
+
+  function scrollByStep(dir){ rail.scrollBy({left: dir*step, behavior:'smooth'}); }
+  prev?.addEventListener('click', ()=>scrollByStep(-1));
+  next?.addEventListener('click', ()=>scrollByStep(1));
+
+  rail.querySelectorAll('.mini-card').forEach(function(card){
+    const priceEl = card.querySelector('.mini-card__price strong');
+    const strEl   = card.querySelector('.mini-card__price .str');
+    const badge   = card.querySelector('.mini-card__badge');
+
+    if (badge && badge.dataset.old && badge.dataset.new) {
+      const o = parseFloat(badge.dataset.old || '0');
+      const n = parseFloat(badge.dataset.new || '0');
+      if (o > n && o > 0) {
+        const pct = Math.round((1 - (n/o)) * 100);
+        badge.textContent = `-${pct}%`;
+      } else {
+        badge.remove();
+      }
+      return;
+    }
+
+    if(priceEl && strEl && badge){
+      const p = parseFloat(priceEl.textContent.replace(/[^\d.]/g,'') || '0');
+      const o = parseFloat(strEl.textContent.replace(/[^\d.]/g,'')   || '0');
+      if(o > p && o > 0){
+        const pct = Math.round((1 - (p/o)) * 100);
+        badge.textContent = `-${pct}%`;
+      } else {
+        badge.remove?.();
+      }
+    }
+  });
+})();
+
+
     const prev = rail.parentElement.querySelector('.rail-btn.prev');
     const next = rail.parentElement.querySelector('.rail-btn.next');
     const step = 260;

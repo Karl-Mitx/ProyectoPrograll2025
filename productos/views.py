@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Producto, CarouselImage, PromoCard
+from .models import Producto, CarouselImage, PromoCard, PromoPill
 from django.db.models import Q
 
 def lista_productos(request):
@@ -49,14 +49,21 @@ def lista_productos(request):
         productos = productos.order_by('-valoracion')
     else:
         productos = productos.order_by('-id')
-
+        
+        gamer_products = (Producto.objects
+                  .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
+                  .order_by('-id')[:12])
+    
     carousel_images = CarouselImage.objects.all()
     promo_cards = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
+    promo_pills = PromoPill.objects.filter(activo=True).order_by('orden')[:2]
 
     context = {
         'productos': productos,
         'carousel_images': carousel_images,
         'promo_cards': promo_cards,
+        'promo_pills': promo_pills,
+        'gamer_products': gamer_products,
     }
     return render(request, 'productos/lista.html', context)
 
