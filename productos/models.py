@@ -154,6 +154,39 @@ class CarouselImage(models.Model):
     enlace = models.URLField(blank=True, help_text="URL al que redirige al hacer click, opcional")
     activo = models.BooleanField(default=True)
     orden = models.PositiveIntegerField(default=0)
+    
+class PromoCard(models.Model):
+    BADGE_STYLES = [
+        ('solid', 'Sólido'),
+        ('ghost', 'Ghost (borde claro)'),
+    ]
+
+    titulo = models.CharField(max_length=120)
+    badge_text = models.CharField(max_length=40, blank=True)
+    badge_style = models.CharField(max_length=10, choices=BADGE_STYLES, default='solid')
+    cta_text = models.CharField(max_length=40, default='Ver ofertas')
+    enlace = models.URLField(blank=True)
+    imagen = models.ImageField(upload_to='promos/', blank=True, null=True)
+
+    gradiente_clase = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="Ej: house, tennis, starlink, scooter, baby, kitchen"
+    )
+
+    texto_claro = models.BooleanField(
+        default=False,
+        help_text="Marcar si el texto debe ir claro (para fondos oscuros)."
+    )
+    activo = models.BooleanField(default=True)
+    orden = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return self.titulo
+
 
     class Meta:
         ordering = ['orden']

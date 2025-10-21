@@ -506,7 +506,30 @@ html[data-theme="light"] .subnav .chip { background: #f1f3f5; }
   background: var(--card-bg); border:1px solid var(--line);
   box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
-.promo-bg{ position:absolute; inset:0; }
+.promo-bg{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.promo-card .promo-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background: linear-gradient(180deg, rgba(0,0,0,.0) 0%, rgba(0,0,0,.35) 100%);
+  opacity: .75;
+}
+
+.promo-card .promo-bg.house::after,
+.promo-card .promo-bg.tennis::after,
+.promo-card .promo-bg.starlink::after,
+.promo-card .promo-bg.scooter::after,
+.promo-card .promo-bg.baby::after,
+.promo-card .promo-bg.kitchen::after{
+  opacity:.25;
+}
 .promo-content{
   position:relative; z-index:2; height:100%;
   padding:18px; display:flex; flex-direction:column; justify-content:space-between;

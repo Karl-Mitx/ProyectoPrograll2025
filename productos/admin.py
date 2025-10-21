@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Producto
 from .models import CarouselImage
+from .models import PromoCard
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
@@ -11,3 +12,9 @@ class ProductoAdmin(admin.ModelAdmin):
 class CarouselImageAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'activo', 'orden')
     list_editable = ('activo', 'orden')
+    
+@admin.register(PromoCard)
+class PromoCardAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'activo', 'orden')
+    list_editable = ('activo', 'orden')
+    search_fields = ('titulo', 'badge_text')

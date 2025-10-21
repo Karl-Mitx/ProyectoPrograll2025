@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Producto, CarouselImage
+from .models import Producto, CarouselImage, PromoCard
 from django.db.models import Q
 
 def lista_productos(request):
@@ -51,12 +51,13 @@ def lista_productos(request):
         productos = productos.order_by('-id')
 
     carousel_images = CarouselImage.objects.all()
+    promo_cards = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
 
     context = {
         'productos': productos,
-        'carousel_images': carousel_images
+        'carousel_images': carousel_images,
+        'promo_cards': promo_cards,
     }
-
     return render(request, 'productos/lista.html', context)
 
 def productos_todos(request):

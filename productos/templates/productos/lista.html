@@ -18,7 +18,7 @@
     <div class="topbar">
         <div class="brand">
             <div class="badge">💻</div>
-            <div>ElecTRON</div>
+            <div>ElecTRON - Lo Mejor en Electrónica</div>
         </div>
         <button id="themeToggle">☀️ / 🌙</button>
         <div class="spacer"></div>
@@ -117,77 +117,33 @@
 </section>
 
 <section class="promo-grid" aria-label="Promociones destacadas">
-
-  <article class="promo-card">
-    <div class="promo-bg house"></div>
-    <div class="promo-content">
-      <div>
-        <span class="promo-badge"><strong>20%</strong> DCTO</span>
-        <h3 class="promo-title">Lo mejor para tu hogar con hasta</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver productos</button>
-    </div>
-  </article>
-
-
-  <article class="promo-card">
-    <div class="promo-bg tennis"></div>
-    <div class="promo-content">
-      <div>
-        <span class="promo-badge"><strong>15%</strong> DCTO</span>
-        <h3 class="promo-title">Potencia tu juego</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver ofertas</button>
-    </div>
-  </article>
-
-
-  <article class="promo-card">
-    <div class="promo-bg starlink"></div>
-    <div class="promo-content promo-light">
-      <div>
-        <span class="promo-badge ghost">STARLINK</span>
-        <h3 class="promo-title">Internet rápido, en cualquier lugar</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver ofertas</button>
-    </div>
-  </article>
-
-
-  <article class="promo-card">
-    <div class="promo-bg scooter"></div>
-    <div class="promo-content">
-      <div>
-        <span class="promo-badge"><strong>15%</strong> DCTO</span>
-        <h3 class="promo-title">¡De todo para horas de diversión!</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver ofertas</button>
-    </div>
-  </article>
-
-
-  <article class="promo-card">
-    <div class="promo-bg baby"></div>
-    <div class="promo-content">
-      <div>
-        <span class="promo-badge"><strong>15%</strong> DCTO</span>
-        <h3 class="promo-title">Elige seguridad y confort para tu bebé</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver ofertas</button>
-    </div>
-  </article>
-
-
-  <article class="promo-card">
-    <div class="promo-bg kitchen"></div>
-    <div class="promo-content">
-      <div>
-        <span class="promo-badge ghost">NUEVO</span>
-        <h3 class="promo-title">Equipa tu cocina con lo nuevo</h3>
-      </div>
-      <button class="promo-btn" data-scroll="#grid">Ver productos</button>
-    </div>
-  </article>
+  {% if promo_cards %}
+    {% for c in promo_cards %}
+      <article class="promo-card {% if c.texto_claro %}promo-light{% endif %}">
+        <div class="promo-bg
+            {% if not c.imagen and c.gradiente_clase %}{{ c.gradiente_clase }}{% endif %}"
+     {% if c.imagen %}style="background-image:url('{{ c.imagen.url }}');"{% endif %}>
+</div>
+        <div class="promo-content {% if c.texto_claro %}promo-light{% endif %}">
+          <div>
+            {% if c.badge_text %}
+              <span class="promo-badge {% if c.badge_style == 'ghost' %}ghost{% endif %}">
+                {{ c.badge_text }}
+              </span>
+            {% endif %}
+            <h3 class="promo-title">{{ c.titulo }}</h3>
+          </div>
+          {% if c.enlace %}
+            <a class="promo-btn" href="{{ c.enlace }}">{{ c.cta_text }}</a>
+          {% else %}
+            <button class="promo-btn" data-scroll="#grid">{{ c.cta_text }}</button>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    {# Fallback: si no has creado promos en admin, mostramos tus 6 tarjetas de ejemplo #}
+  {% endif %}
 </section>
 
 <section class="featured">
