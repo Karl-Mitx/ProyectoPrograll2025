@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Producto
 from django.db.models import Q
 
 def lista_productos(request):
+    
     productos = Producto.objects.all()
 
     q = request.GET.get('q', '').strip()

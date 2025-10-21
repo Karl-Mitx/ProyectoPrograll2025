@@ -20,6 +20,7 @@
         <button id="btnCart" class="pill eco">🛒 Carrito <span id="cartCount" class="cart-count">0</span></button>
     </div>
 <form class="toolbar" method="get" action=".">
+    <button type="submit" class="btn eco">Buscar</button>
     <div class="control">
         <input type="search" name="q" id="q" placeholder="Buscar (modelo, etiqueta, uso)" value="{{ request.GET.q }}">
     </div>
@@ -118,7 +119,6 @@
                 </div>
                 <div class="actions">
                     <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
-                    <button class="btn ghost" data-detail="{{ p.id }}">Detalles</button>
                 </div>
             </div>
         </div>
@@ -170,6 +170,56 @@
         </div>
     </div>
 </div>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h2 class="footer-logo">ElecTRON</h2>
+      <p>Lo mejor en productos electrónicos, componentes y tecnología de punta.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Enlaces rápidos</h3>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Tienda</a></li>
+        <li><a href="#">Ofertas</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Categorías</h3>
+      <ul>
+        <li><a href="#">Componentes</a></li>
+        <li><a href="#">Accesorios</a></li>
+        <li><a href="#">Computadoras</a></li>
+        <li><a href="#">Audio y Video</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3>Contáctanos</h3>
+      <ul>
+        <li>📍 Puerto Barrios, Izabal</li>
+        <li>📞 +502 5986-1872</li>
+        <li>✉️ contacto@electron.com</li>
+      </ul>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 ElecTRON. Todos los derechos reservados.
+  </div>
+</footer>
+
+<!-- Iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/footer.css' %}">
 
 <script src="{% static 'productos/app.js' %}?v=1.2"></script>
 </body>

@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-  // === CAMBIO DE TEMA (CLARO/OSCURO) ===
   const themeToggle = document.getElementById('themeToggle');
 
   function aplicarTemaGuardado() {
       let temaGuardado = localStorage.getItem('theme');
       if (!temaGuardado) {
-          temaGuardado = 'dark'; // Tema por defecto
+          temaGuardado = 'dark';
       }
       document.documentElement.setAttribute('data-theme', temaGuardado);
   }
@@ -28,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   aplicarTemaGuardado();
 
-
-  // === CÓDIGO DEL CARRITO ===
   const btnCart = document.getElementById('btnCart');
   const drawer = document.getElementById('drawer');
   const closeCart = document.getElementById('closeCart');
