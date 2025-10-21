@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function aplicarTemaGuardado() {
       let temaGuardado = localStorage.getItem('theme');
       if (!temaGuardado) {
-          temaGuardado = 'dark';
+          temaGuardado = 'light';
       }
       document.documentElement.setAttribute('data-theme', temaGuardado);
   }
@@ -100,24 +100,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  if (btnCart && drawer) btnCart.onclick = function() { drawer.classList.add('open'); };
-  if (closeCart && drawer) closeCart.onclick = function() { drawer.classList.remove('open'); };
+if (btnCart && drawer) btnCart.onclick = function() {
+  drawer.classList.add('open');
+  const overlay = document.getElementById('overlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+  drawer.setAttribute('aria-hidden', 'false');
+};
+
+if (closeCart && drawer) closeCart.onclick = function() {
+  drawer.classList.remove('open');
+  const overlay = document.getElementById('overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  drawer.setAttribute('aria-hidden', 'true');
+};
+
+const overlayEl = document.getElementById('overlay');
+if (overlayEl) {
+  overlayEl.addEventListener('click', () => {
+    drawer.classList.remove('open');
+    overlayEl.classList.remove('active');
+    overlayEl.setAttribute('aria-hidden', 'true');
+    drawer.setAttribute('aria-hidden', 'true');
+  });
+}
+
   if (clearCartBtn) clearCartBtn.onclick = function() { cart = []; renderCart(); };
 
   const botonesAgregar = document.querySelectorAll('[data-add]');
-  botonesAgregar.forEach(function(btn) {
-    btn.onclick = function() {
-      const id = String(this.dataset.add);
-      const card = this.closest('.card');
-      const name = card ? (card.querySelector('.name')?.innerText || 'Producto') : 'Producto';
-      const priceText = card ? (card.querySelector('.price')?.textContent.replace('Q','') || '0') : '0';
-      const price = parseFloat(priceText) || 0;
-      const existing = cart.find(function(i) { return i.id === id; });
-      if (existing) existing.qty++;
-      else cart.push({id, name, price, qty:1});
-      renderCart();
-    };
-  });
+botonesAgregar.forEach(function(btn) {
+  btn.onclick = function() {
+    const id = String(this.dataset.add);
+    const cont = this.closest('.card, .mini-card');
+    const nameEl  = cont?.querySelector('.name, .mini-card__name, .info .name');
+    const priceEl = cont?.querySelector('.price, .mini-card__price strong, .info .price');
+
+    const name = nameEl ? nameEl.textContent.trim() : 'Producto';
+    const priceText = priceEl ? priceEl.textContent : '0';
+    const price = parseFloat(priceText.replace(/[^\d.]/g, '')) || 0;
+
+    const existing = cart.find(function(i) { return i.id === id; });
+    if (existing) existing.qty++;
+    else cart.push({id, name, price, qty:1});
+    renderCart();
+  };
+});
+
 
   if (limpiarF) {
     limpiarF.addEventListener('click', async function(e) {

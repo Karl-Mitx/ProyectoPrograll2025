@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Todos los productos</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'productos/todos.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="{% url 'productos_todos' %}">ElecTRON</a>
+
+  <form class="search" method="get" action=".">
+    <input type="search" name="q" value="{{ q }}" placeholder="Buscar…">
+    {% if brand %}<input type="hidden" name="brand" value="{{ brand }}">{% endif %}
+    {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+  </form>
+
+  <a class="btn-back" href="{% url 'lista_productos' %}">Volver</a>
+
+  <button id="btnCart" class="pill eco">🛒 Carrito <span id="cartCount" class="cart-count">0</span></button>
+</header>
+
+<main class="page">
+  <aside class="sidebar">
+    <form id="filters" method="get" action=".">
+      <div class="facet">
+        <button class="facet__head" type="button" data-collapse>Marca</button>
+        <div class="facet__body">
+          {% for b in brands %}
+          <label class="chk">
+            <input type="radio" name="brand" value="{{ b }}" {% if b == brand %}checked{% endif %}>
+            <span>{{ b }}</span>
+          </label>
+          {% endfor %}
+          <label class="chk">
+            <input type="radio" name="brand" value="" {% if not brand %}checked{% endif %}>
+            <span>Todas</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="facet">
+        <button class="facet__head" type="button" data-collapse>Multijugador</button>
+        <div class="facet__body">
+          <label class="chk"><input type="checkbox" disabled> Online</label>
+          <label class="chk"><input type="checkbox" disabled> Local</label>
+        </div>
+      </div>
+
+      <div class="facet">
+        <button class="facet__head" type="button" data-collapse>Género</button>
+        <div class="facet__body">
+          <label class="chk"><input type="checkbox" disabled> Acción</label>
+          <label class="chk"><input type="checkbox" disabled> Aventura</label>
+        </div>
+      </div>
+
+      <div class="facet">
+        <button class="facet__head" type="button" data-collapse>Modo de juego</button>
+        <div class="facet__body">
+          <label class="chk"><input type="checkbox" disabled> Físico</label>
+          <label class="chk"><input type="checkbox" disabled> Digital</label>
+        </div>
+      </div>
+
+      <div class="facet-actions">
+        <button class="btn primary" type="submit">Aplicar</button>
+        <a href="{% url 'productos_todos' %}" class="btn ghost">Limpiar</a>
+      </div>
+    </form>
+  </aside>
+
+  <section class="results">
+    <div class="results__head">
+      <div class="title">“{{ q|default:brand|default:'Todos' }}”</div>
+      <div class="meta">Resultados: {{ productos|length }}</div>
+
+      <div class="controls">
+        <form method="get" action=".">
+          {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+          {% if brand %}<input type="hidden" name="brand" value="{{ brand }}">{% endif %}
+          <label>Ordenar:
+            <select name="sort" onchange="this.form.submit()">
+              <option value="relevance" {% if sort == 'relevance' %}selected{% endif %}>Relevancia</option>
+              <option value="priceAsc" {% if sort == 'priceAsc' %}selected{% endif %}>Precio ↑</option>
+              <option value="priceDesc" {% if sort == 'priceDesc' %}selected{% endif %}>Precio ↓</option>
+              <option value="name" {% if sort == 'name' %}selected{% endif %}>Nombre</option>
+            </select>
+          </label>
+        </form>
+
+        <div class="view">
+          <button class="view-btn is-active" data-view="grid"><i class="fa-solid fa-border-all"></i></button>
+          <button class="view-btn" data-view="list"><i class="fa-solid fa-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="cards" class="cards grid">
+      {% for p in productos %}
+      <article class="card"
+        data-id="{{ p.id }}"
+        data-name="{{ p.nombre|escape }}"
+        data-price="{{ p.precio|floatformat:2 }}"
+      >
+        <a class="thumb" href="#"><img src="{{ p.imagen.url }}" alt="{{ p.nombre }}"></a>
+        <div class="body">
+          <a class="brand-link" href="?brand={{ p.marca|urlencode }}">{{ p.marca }}</a>
+          <a class="name" href="#">{{ p.nombre }}</a>
+
+          <div class="pricing">
+            <strong>Q{{ p.precio }}</strong>
+            {% if p.precio_original %}
+              <span class="str">Q{{ p.precio_original }}</span>
+              <span class="off" data-old="{{ p.precio_original }}" data-new="{{ p.precio }}">-0%</span>
+            {% endif %}
+          </div>
+
+          <div class="cta">
+            <button class="add"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
+          </div>
+
+          <div class="vendor">Vendedor: <a href="#">ElecTRON</a></div>
+        </div>
+      </article>
+      {% empty %}
+      <p>No hay productos.</p>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<aside id="cartDrawer" class="drawer" aria-hidden="true">
+  <header class="drawer__header">
+    <strong>Tu carrito</strong>
+    <button id="closeCart" class="drawer__close" aria-label="Cerrar">✕</button>
+  </header>
+
+  <div id="cartItems" class="drawer__items"></div>
+
+  <footer class="drawer__footer">
+    <div class="line"><span>Subtotal</span><span id="subtotal">Q0.00</span></div>
+    <div class="line"><span>IVA (12%)</span><span id="iva">Q0.00</span></div>
+    <div class="line total"><strong>Total</strong><strong id="total">Q0.00</strong></div>
+    <div class="drawer__actions">
+      <button id="clearCart" class="btn ghost">Vaciar</button>
+      <button id="checkout" class="btn primary">Pagar</button>
+    </div>
+  </footer>
+</aside>
+
+<div id="overlay" class="overlay" aria-hidden="true"></div>
+
+<script src="{% static 'productos/todos.js' %}"></script>
+</body>
+</html>

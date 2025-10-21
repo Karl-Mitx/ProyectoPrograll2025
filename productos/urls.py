@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
      path('', views.lista_productos, name='lista_productos'),
+     path('productos/todos/', views.productos_todos, name='productos_todos'),
 ]
 from django.conf import settings
 from django.conf.urls.static import static

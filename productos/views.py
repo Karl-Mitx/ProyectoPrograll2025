@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from .models import Producto, CarouselImage
+from django.db.models import Q
 
 def lista_productos(request):
-    """
-    Vista principal para mostrar los productos y el carrusel en la página de inicio.
-    """
+ 
     productos = Producto.objects.all()
 
     q = request.GET.get('q', '')
@@ -59,3 +58,48 @@ def lista_productos(request):
     }
 
     return render(request, 'productos/lista.html', context)
+
+def productos_todos(request):
+    """
+    Página 'Ver todos': sidebar + grilla/lista, con búsqueda, marca y orden.
+    """
+    productos = Producto.objects.all()
+    
+    q = request.GET.get('q', '').strip()
+    brand = request.GET.get('brand', '').strip()
+    sort = request.GET.get('sort', 'relevance')
+
+    if q:
+        productos = productos.filter(
+            Q(nombre__icontains=q) |
+            Q(descripcion__icontains=q) |
+            Q(categoria__icontains=q) |
+            Q(marca__icontains=q)
+        )
+
+    if brand:
+        productos = productos.filter(marca__iexact=brand)
+
+
+    if sort == 'priceAsc':
+        productos = productos.order_by('precio')
+    elif sort == 'priceDesc':
+        productos = productos.order_by('-precio')
+    elif sort == 'name':
+        productos = productos.order_by('nombre')
+    else:
+        productos = productos.order_by('-id')
+
+    brands = (Producto.objects
+              .order_by('marca')
+              .values_list('marca', flat=True)
+              .distinct())
+
+    context = {
+        'productos': productos,
+        'q': q,
+        'brand': brand,
+        'sort': sort,
+        'brands': brands,
+    }
+    return render(request, 'productos/todos.html', context)

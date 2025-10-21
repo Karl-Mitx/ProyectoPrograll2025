@@ -81,18 +81,6 @@
             <button type="button" id="limpiarF" class="pill">Eliminar filtrado</button>
         </div>
     </form>
-<nav class="subnav">
-  <div class="subnav-inner">
-    <a href="#" class="chip">Ofertas</a>
-    <a href="#" class="chip">Marcas</a>
-    <a href="#" class="chip">Marketplace</a>
-    <a href="#" class="chip">Tiendas</a>
-    <a href="#" class="chip">Puntos</a>
-    <a href="#" class="chip">Servicios</a>
-    <a href="#" class="chip">Rastrear pedido</a>
-  </div>
-</nav>
-
 </header>
 <div class="carousel">
     <div class="carousel-track">
@@ -201,11 +189,11 @@
     </div>
   </article>
 </section>
-<!-- OFERTAS DESTACADAS -->
+
 <section class="featured">
   <div class="featured__head">
-    <h2 class="featured__title">⚡ Ofertas destacadas</h2>
-    <a href="{% url request.resolver_match.view_name %}" class="featured__all">Ver todos</a>
+    <h2 class="featured__title">Productos destacados</h2>
+    <a href="{% url 'productos_todos' %}" class="btn eco">Ver todos</a>
   </div>
 
   <div class="featured__rail">
@@ -213,32 +201,34 @@
 
     <div class="rail" id="rail-ofertas">
       {% for p in productos|slice:":12" %}
-      <article class="mini-card">
-        <a class="mini-card__img" href="#">
-          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-          {% if p.precio_original %}
-            <span class="mini-card__badge">
-              -{% widthratio p.precio_original|floatformat:0|add:"-`"|cut:"`"|add:p.precio|floatformat:0  p.precio_original 100 as pct %}
-              {% comment %}
-              widthratio solo acepta enteros; haremos el % en JS si quieres exactitud.
-              {% endcomment %}
-            </span>
-          {% endif %}
-        </a>
-        <div class="mini-card__body">
-          <div class="mini-card__brand">
-            Marca:
-            <a href="?brand={{ p.marca|urlencode }}"> {{ p.marca }} </a>
-          </div>
-          <a class="mini-card__name" href="#">{{ p.nombre|truncatechars:40 }}</a>
-          <div class="mini-card__price">
-            <strong>Q{{ p.precio }}</strong>
-            {% if p.precio_original %}
-              <span class="str">Q{{ p.precio_original }}</span>
-            {% endif %}
-          </div>
-        </div>
-      </article>
+     <article class="mini-card">
+  <a class="mini-card__img" href="#">
+    <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+    {% if p.precio_original %}
+      <span class="mini-card__badge">-%DESC%</span>
+    {% endif %}
+  </a>
+
+  <div class="mini-card__body">
+    <div class="mini-card__brand">
+      Marca: <a href="?brand={{ p.marca|urlencode }}">{{ p.marca }}</a>
+    </div>
+
+    <a class="mini-card__name name" href="#">{{ p.nombre }}</a>
+
+    <div class="mini-card__price">
+      <strong class="price">Q{{ p.precio }}</strong>
+      {% if p.precio_original %}
+        <span class="str">Q{{ p.precio_original }}</span>
+      {% endif %}
+    </div>
+
+    <div class="mini-card__cta">
+      <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
+    </div>
+  </div>
+</article>
+
       {% endfor %}
     </div>
 
@@ -246,48 +236,28 @@
   </div>
 </section>
 
-<main>
-    <div id="grid" class="grid">
-        {% for p in productos %}
-        <div class="card">
-            <img class="thumb" src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-            <div class="info">
-                <div class="name">{{ p.nombre }}</div>
-                <div class="desc">{{ p.descripcion }}</div>
-                <div class="tag">{{ p.categoria }}</div>
-                <div class="tag">{{ p.marca }}</div>
-                <div class="tag">{{ p.estado|title }}</div>
-                <div class="tags">
-                    {% if p.tipo %}<span class="tag">{{ p.tipo }}</span>{% endif %}
-                    {% if p.gama_alta %}<span class="tag">Gama Alta</span>{% endif %}
-                    {% if p.portatil %}<span class="tag">Portátil</span>{% endif %}
-                    {% for t in p.tags %}{% if t %}<span class="tag">{{ t }}</span>{% endif %}{% endfor %}
-                </div>
-                <div class="row">
-                    <div class="stars" title="{{ p.valoracion|floatformat:1 }} / 5">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= p.valoracion|floatformat:0 %}★{% else %}☆{% endif %}
-                        {% endfor %}
-                    </div>
-                    <div>
-                        <span class="price">Q{{ p.precio }}</span>
-                        {% if p.precio_original %}<span class="str">Q{{ p.precio_original }}</span>{% endif %}
-                    </div>
-                </div>
-                <div class="actions">
-                    <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <p style="grid-column:1/-1; text-align:center">No hay productos.</p>
-        {% endfor %}
-    </div>
-</main>
 <aside id="drawer" class="drawer" aria-hidden="true">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:12px;">
+    <strong>Tu carrito</strong>
+    <button id="closeCart" class="pill">✕</button>
+  </header>
+
+  <div style="padding:12px;flex:1;overflow:auto;">
+    <div id="cartItems"></div>
+  </div>
+
+  <footer style="padding:12px;">
+    <div class="line"><span>Subtotal</span><span id="subtotal">Q0.00</span></div>
+    <div class="line"><span>IVA (12%)</span><span id="iva">Q0.00</span></div>
+    <div class="line"><strong>Total</strong><strong id="total">Q0.00</strong></div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button id="clearCart" class="btn ghost" style="flex:1;">Vaciar</button>
+      <button class="btn eco" style="flex:1;">Pagar</button>
+    </div>
+  </footer>
 </aside>
-<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
-</div>
+
+<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true"></div>
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-section">
