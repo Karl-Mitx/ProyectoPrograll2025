@@ -132,21 +132,33 @@ if (overlayEl) {
 
   if (clearCartBtn) clearCartBtn.onclick = function() { cart = []; renderCart(); };
 
-  const botonesAgregar = document.querySelectorAll('[data-add]');
+ const botonesAgregar = document.querySelectorAll('[data-add]');
 botonesAgregar.forEach(function(btn) {
   btn.onclick = function() {
     const id = String(this.dataset.add);
-    const cont = this.closest('.card, .mini-card');
-    const nameEl  = cont?.querySelector('.name, .mini-card__name, .info .name');
-    const priceEl = cont?.querySelector('.price, .mini-card__price strong, .info .price');
 
-    const name = nameEl ? nameEl.textContent.trim() : 'Producto';
-    const priceText = priceEl ? priceEl.textContent : '0';
-    const price = parseFloat(priceText.replace(/[^\d.]/g, '')) || 0;
+    let name  = this.dataset.name || 'Producto';
+    let price = parseFloat(this.dataset.price || '0');
+    if (!name || !price) {
+      const cont = this.closest('.card, .mini-card');
+      const nameEl  = cont?.querySelector('.name, .mini-card__name, .info .name');
+      const priceEl = cont?.querySelector('.price, .mini-card__price strong, .info .price');
+      name = name || (nameEl ? nameEl.textContent.trim() : 'Producto');
 
-    const existing = cart.find(function(i) { return i.id === id; });
+      const parseMoney = s => {
+        if (!s) return 0;
+        s = s.replace(/[^\d.,-]/g, '');             
+        s = s.replace(/\.(?=\d{3}(?:\D|$))/g, '');
+        s = s.replace(',', '.');         
+        return parseFloat(s) || 0;
+      };
+      price = price || parseMoney(priceEl?.textContent || '0');
+    }
+
+    const existing = cart.find(i => i.id === id);
     if (existing) existing.qty++;
-    else cart.push({id, name, price, qty:1});
+    else cart.push({ id, name, price, qty: 1 });
+
     renderCart();
   };
 });

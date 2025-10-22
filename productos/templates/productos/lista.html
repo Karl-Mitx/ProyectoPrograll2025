@@ -46,29 +46,6 @@
             <input type="search" name="q" id="q" placeholder="Buscar (modelo, etiqueta, uso)" value="{{ request.GET.q }}">
         </div>
         <div class="control">
-            <select name="type" id="type">
-                <option value="">Categoría</option>
-                <option value="Computadora" {% if request.GET.type == "Computadora" %}selected{% endif %}>Computadora</option>
-                <option value="Smartphone" {% if request.GET.type == "Smartphone" %}selected{% endif %}>Smartphone</option>
-                <option value="Audifonos" {% if request.GET.type == "Audifonos" %}selected{% endif %}>Audífonos</option>
-                <option value="TV" {% if request.GET.type == "TV" %}selected{% endif %}>TV</option>
-                <option value="Consola" {% if request.GET.type == "Consola" %}selected{% endif %}>Consola</option>
-                <option value="Accesorio" {% if request.GET.type == "Accesorio" %}selected{% endif %}>Accesorio</option>
-                <option value="Microcontrolador" {% if request.GET.type == "Microcontrolador" %}selected{% endif %}>Microcontrolador</option>
-            </select>
-
-            <select name="brand" id="brand">
-                <option value="">Marca</option>
-                <option value="Apple" {% if request.GET.brand == "Apple" %}selected{% endif %}>Apple</option>
-                <option value="Samsung" {% if request.GET.brand == "Samsung" %}selected{% endif %}>Samsung</option>
-                <option value="Sony" {% if request.GET.brand == "Sony" %}selected{% endif %}>Sony</option>
-                <option value="Logitech" {% if request.GET.brand == "Logitech" %}selected{% endif %}>Logitech</option>
-                <option value="Xiaomi" {% if request.GET.brand == "Xiaomi" %}selected{% endif %}>Xiaomi</option>
-                <option value="Arduino" {% if request.GET.brand == "Arduino" %}selected{% endif %}>Arduino</option>
-            </select>
-        </div>
-
-        <div class="control">
             <input type="number" name="min" id="min" placeholder="Precio mín (GTQ)" value="{{ request.GET.min }}">
             <input type="number" name="max" id="max" placeholder="Precio máx (GTQ)" value="{{ request.GET.max }}">
         </div>
@@ -76,9 +53,8 @@
         <div class="control">
             <select name="sort" id="sort">
                 <option value="pop" {% if request.GET.sort == "pop" %}selected{% endif %}>Ordenar: Popularidad</option>
-                <option value="priceAsc" {% if request.GET.sort == "priceAsc" %}selected{% endif %}>Precio ↑</option>
-                <option value="priceDesc" {% if request.GET.sort == "priceDesc" %}selected{% endif %}>Precio ↓</option>
-                <option value="rating" {% if request.GET.sort == "rating" %}selected{% endif %}>Mejor valoración</option>
+                <option value="priceAsc" {% if request.GET.sort == "priceAsc" %}selected{% endif %}>Precio ↓</option>
+                <option value="priceDesc" {% if request.GET.sort == "priceDesc" %}selected{% endif %}>Precio ↑</option>
             </select>
 
             <div class="checks">
@@ -195,10 +171,15 @@
       {% endif %}
     </div>
 
-    <div class="mini-card__cta">
-      <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
-    </div>
-  </div>
+    <button
+  class="btn eco"
+  data-add="{{ p.id }}"
+  data-name="{{ p.nombre|escapejs }}"
+  data-price="{{ p.precio }}"
+>
+  Añadir al carrito
+</button>
+
 </article>
 
       {% endfor %}
@@ -221,7 +202,7 @@
       <article class="mini-card">
         <a class="mini-card__img" href="#">
           <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-          {% comment %} Badge de descuento (lo calculamos con JS) {% endcomment %}
+          {% comment %} Badge de descuento {% endcomment %}
           {% if p.precio_original %}
             <span class="mini-card__badge"
                   data-old="{{ p.precio_original }}"
@@ -243,9 +224,15 @@
             {% endif %}
           </div>
 
-          <div class="mini-card__cta">
-            <button class="btn eco" data-add="{{ p.id }}">Añadir al carrito</button>
-          </div>
+          <button
+  class="btn eco"
+  data-add="{{ p.id }}"
+  data-name="{{ p.nombre|escapejs }}"
+  data-price="{{ p.precio }}"
+>
+  Añadir al carrito
+</button>
+
         </div>
       </article>
       {% empty %}
