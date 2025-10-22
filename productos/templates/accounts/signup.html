@@ -1,0 +1,41 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Crear cuenta</title>
+  <link rel="stylesheet" href="{% static 'productos/style.css' %}">
+</head>
+<body>
+<header class="topbar" style="display:flex;gap:10px;align-items:center;padding:12px 24px;background:var(--secondary);border-bottom:2px solid var(--primary)">
+  <div class="brand"><div class="badge">💻</div><div>ElecTRON</div></div>
+  <div class="spacer"></div>
+  <a class="pill" href="{% url 'lista_productos' %}">Volver</a>
+</header>
+
+<main style="max-width:640px;margin:24px auto;padding:16px;background:var(--card-bg);border:1px solid var(--line);border-radius:12px">
+  <h1>Crear cuenta</h1>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  {% for field in form %}
+    <p>
+      <label>{{ field.label }}</label><br>
+      {{ field }}
+      {% for e in field.errors %}
+        <br><small style="color:#c00">{{ e }}</small>
+      {% endfor %}
+    </p>
+  {% endfor %}
+
+  <button class="btn eco" type="submit">Registrarme</button>
+</form>
+
+  <p style="margin-top:12px">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</main>
+</body>
+</html>

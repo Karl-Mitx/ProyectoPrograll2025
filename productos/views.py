@@ -1,26 +1,27 @@
-from django.shortcuts import render
-from .models import Producto, CarouselImage, PromoCard, PromoPill
+from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile
 
 def lista_productos(request):
- 
     productos = Producto.objects.all()
 
-    q = request.GET.get('q', '')
-    tipo = request.GET.get('type', '')
-    marca = request.GET.get('brand', '')
-    min_precio = request.GET.get('min', '')
-    max_precio = request.GET.get('max', '')
-    nuevo = request.GET.get('nuevo')
-    usado = request.GET.get('usado')
-    sort = request.GET.get('sort', '')
+    q          = request.GET.get('q', '').strip()
+    tipo       = request.GET.get('type', '').strip()
+    marca      = request.GET.get('brand', '').strip()
+    min_precio = request.GET.get('min', '').strip()
+    max_precio = request.GET.get('max', '').strip()
+    nuevo      = request.GET.get('nuevo')
+    usado      = request.GET.get('usado')
+    sort       = request.GET.get('sort', '')
 
     if q:
-        productos = productos.filter(nombre__icontains=q) | productos.filter(descripcion__icontains=q)
+        productos = productos.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q)
+        )
 
     if tipo:
         productos = productos.filter(categoria__iexact=tipo)
-
     if marca:
         productos = productos.filter(marca__iexact=marca)
 
@@ -46,17 +47,17 @@ def lista_productos(request):
     elif sort == 'priceDesc':
         productos = productos.order_by('-precio')
     elif sort == 'rating':
-        productos = productos.order_by('-valoracion')
+        productos = productos.order_by('-id')
     else:
         productos = productos.order_by('-id')
         
-        gamer_products = (Producto.objects
-                  .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
-                  .order_by('-id')[:12])
-    
+    gamer_products = (Producto.objects
+                      .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
+                      .order_by('-id')[:12])
+
     carousel_images = CarouselImage.objects.all()
-    promo_cards = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
-    promo_pills = PromoPill.objects.filter(activo=True).order_by('orden')[:2]
+    promo_cards     = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
+    promo_pills     = PromoPill.objects.filter(activo=True).order_by('orden')[:2]
 
     context = {
         'productos': productos,
@@ -67,15 +68,13 @@ def lista_productos(request):
     }
     return render(request, 'productos/lista.html', context)
 
+
 def productos_todos(request):
-    """
-    Página 'Ver todos': sidebar + grilla/lista, con búsqueda, marca y orden.
-    """
     productos = Producto.objects.all()
-    
-    q = request.GET.get('q', '').strip()
+
+    q     = request.GET.get('q', '').strip()
     brand = request.GET.get('brand', '').strip()
-    sort = request.GET.get('sort', 'relevance')
+    sort  = request.GET.get('sort', 'relevance')
 
     if q:
         productos = productos.filter(
@@ -88,7 +87,6 @@ def productos_todos(request):
     if brand:
         productos = productos.filter(marca__iexact=brand)
 
-
     if sort == 'priceAsc':
         productos = productos.order_by('precio')
     elif sort == 'priceDesc':
@@ -98,16 +96,10 @@ def productos_todos(request):
     else:
         productos = productos.order_by('-id')
 
-    brands = (Producto.objects
-              .order_by('marca')
-              .values_list('marca', flat=True)
-              .distinct())
+    brands = (Producto.objects.order_by('marca')
+              .values_list('marca', flat=True).distinct())
 
-    context = {
+    return render(request, 'productos/todos.html', {
         'productos': productos,
-        'q': q,
-        'brand': brand,
-        'sort': sort,
-        'brands': brands,
-    }
-    return render(request, 'productos/todos.html', context)
+        'q': q, 'brand': brand, 'sort': sort, 'brands': brands,
+    })

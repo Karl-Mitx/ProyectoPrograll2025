@@ -3,6 +3,7 @@ from .models import Producto
 from .models import CarouselImage
 from .models import PromoCard
 from .models import PromoPill
+from .models import Profile
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
@@ -25,3 +26,7 @@ class PromoPillAdmin(admin.ModelAdmin):
     list_display = ('label_html', 'variante', 'activo', 'orden')
     list_editable = ('variante', 'activo', 'orden')
     search_fields = ('label_html', 'cta_text')
+    
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user",)

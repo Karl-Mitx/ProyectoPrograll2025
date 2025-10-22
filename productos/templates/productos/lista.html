@@ -7,8 +7,6 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'productos/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    
     
 </head>
 <body>
@@ -22,6 +20,23 @@
         </div>
         <button id="themeToggle">☀️ / 🌙</button>
         <div class="spacer"></div>
+
+{% if user.is_authenticated %}
+  <a href="{% url 'profile' %}" class="pill">
+    {% if user.profile.avatar %}
+      <img src="{{ user.profile.avatar.url }}" alt="avatar"
+           style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">
+    {% else %}
+      <i class="fa-regular fa-user" style="margin-right:6px"></i>
+    {% endif %}
+    {{ user.first_name|default:user.username }}
+  </a>
+{% else %}
+  <a href="{% url 'login' %}" class="pill">Iniciar sesión</a>
+  <a href="{% url 'signup' %}" class="pill eco">Registrarse</a>
+{% endif %}
+
+
         <button id="btnCart" class="pill eco">🛒 Carrito <span id="cartCount" class="cart-count">0</span></button>
     </div>
 
