@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile
@@ -103,3 +103,15 @@ def productos_todos(request):
         'productos': productos,
         'q': q, 'brand': brand, 'sort': sort, 'brands': brands,
     })
+
+@login_required
+def toggle_favorito(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    profile = Profile.objects.get(user=request.user)
+
+    if producto in profile.favoritos.all():
+        profile.favoritos.remove(producto)
+    else:
+        profile.favoritos.add(producto)
+
+    return redirect(request.META.get('HTTP_REFERER', 'lista_productos'))

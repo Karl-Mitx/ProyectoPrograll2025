@@ -169,6 +169,7 @@
       {% if p.precio_original %}
         <span class="str">Q{{ p.precio_original }}</span>
       {% endif %}
+      <span class="mini-card__stock">Stock: {{ p.stock }}</span>
     </div>
 
     <button
@@ -179,9 +180,24 @@
 >
   Añadir al carrito
 </button>
-
+    {% if user.is_authenticated %}
+      <form action="{% url 'toggle_favorito' p.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        {% if p in user.profile.favoritos.all %}
+          <button type="submit" class="fav-btn" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">
+            ❤️ Quitar de favoritos
+          </button>
+        {% else %}
+          <button type="submit" class="fav-btn" style="color:gray; background:none; border:none; font-size:18px; cursor:pointer;">
+            🤍 Añadir a favoritos
+          </button>
+        {% endif %}
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="fav-btn" style="color:gray; font-size:18px;">🤍 Inicia sesión</a>
+    {% endif %}
+  </div>
 </article>
-
       {% endfor %}
     </div>
 
@@ -222,6 +238,7 @@
             {% if p.precio_original %}
               <span class="str">Q{{ p.precio_original }}</span>
             {% endif %}
+            <span class="mini-card__stock">Stock: {{ p.stock }}</span>
           </div>
 
           <button
@@ -232,6 +249,22 @@
 >
   Añadir al carrito
 </button>
+  {% if user.is_authenticated %}
+      <form action="{% url 'toggle_favorito' p.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        {% if p in user.profile.favoritos.all %}
+          <button type="submit" class="fav-btn" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">
+            ❤️ Quitar de favoritos
+          </button>
+        {% else %}
+          <button type="submit" class="fav-btn" style="color:gray; background:none; border:none; font-size:18px; cursor:pointer;">
+            🤍 Añadir a favoritos
+          </button>
+        {% endif %}
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="fav-btn" style="color:gray; font-size:18px;">🤍 Inicia sesión</a>
+    {% endif %}
 
         </div>
       </article>
