@@ -145,7 +145,6 @@ form.toolbar input[type="search"]{min-width:220px}
 .mini-card__price{display:flex; align-items:center; gap:8px}
 .mini-card__price .str{text-decoration:line-through; color:var(--muted)}
 .mini-card__cta .btn{width:100%; border-radius:999px}
-.mini-card__stock{font-size:.85rem; color:var(--muted)}
 
 /* = Drawer (carrito) ========================================== */
 .drawer{
@@ -162,10 +161,6 @@ form.toolbar input[type="search"]{min-width:220px}
 .item{display:grid; grid-template-columns:1fr auto; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line)}
 .item .qty{display:inline-flex; gap:6px; align-items:center}
 .item .qty button{width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:var(--card); cursor:pointer}
-.drawer .checkout-btn{
-  width:100%; border:0; border-radius:999px; background:var(--accent);
-  color:#fff; padding:12px; font-weight:800; cursor:pointer; margin-top:10px;
-}
 
 .overlay{
   position:fixed; inset:0; background:rgba(0,0,0,.72);
