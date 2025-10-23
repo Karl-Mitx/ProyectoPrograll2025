@@ -13,6 +13,7 @@ def avatar_upload_to(instance, filename):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     avatar = models.ImageField(upload_to=avatar_upload_to, blank=True, null=True)
+    favoritos = models.ManyToManyField('Producto', blank=True, related_name='favorito_por')
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
