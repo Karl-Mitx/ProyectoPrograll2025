@@ -169,6 +169,7 @@
       {% if p.precio_original %}
         <span class="str">Q{{ p.precio_original }}</span>
       {% endif %}
+      <span class="mini-card__stock">Stock: {{ p.stock }}</span>
     </div>
 
     <button
@@ -222,6 +223,7 @@
             {% if p.precio_original %}
               <span class="str">Q{{ p.precio_original }}</span>
             {% endif %}
+            <span class="mini-card__stock">Stock: {{ p.stock }}</span>
           </div>
 
           <button

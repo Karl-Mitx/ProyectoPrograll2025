@@ -166,6 +166,7 @@ class Producto(models.Model):
     categoria = models.CharField(max_length=20, choices=CATEGORIAS, blank=True)
     marca = models.CharField(max_length=20, choices=MARCAS, blank=True)
     estado = models.CharField(max_length=5, choices=ESTADOS, default='nuevo')
+    stock = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.nombre

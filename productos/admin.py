@@ -7,8 +7,8 @@ from .models import Profile
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'categoria', 'marca', 'precio', 'estado')
-    list_filter = ('estado', 'categoria', 'marca')
+    list_display = ('nombre', 'categoria', 'marca', 'precio', 'estado' ,'stock')
+    list_filter = ('estado', 'categoria', 'marca', 'stock')
     
 @admin.register(CarouselImage)
 class CarouselImageAdmin(admin.ModelAdmin):
