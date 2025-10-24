@@ -115,3 +115,25 @@ def toggle_favorito(request, producto_id):
         profile.favoritos.add(producto)
 
     return redirect(request.META.get('HTTP_REFERER', 'lista_productos'))
+
+@login_required
+def favoritos_lista(request):
+    """Muestra la lista de productos favoritos del usuario."""
+    favoritos = request.user.profile.favoritos.all()  # asumiendo que tu modelo Profile tiene un ManyToManyField a Producto
+    return render(request, 'productos/favoritos.html', {'favoritos': favoritos})
+
+@login_required
+def toggle_favorito(request, producto_id):
+    """Agrega o quita un producto de favoritos (AJAX)."""
+    producto = Producto.objects.get(id=producto_id)
+    profile = request.user.profile
+
+    if producto in profile.favoritos.all():
+        profile.favoritos.remove(producto)
+        estado = 'removed'
+    else:
+        profile.favoritos.add(producto)
+        estado = 'added'
+
+        return redirect(request.META.get('HTTP_REFERER', 'productos'))
+    return redirect(request.META.get('HTTP_REFERER', 'productos'))
