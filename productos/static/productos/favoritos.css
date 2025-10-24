@@ -1,0 +1,123 @@
+.favoritos-container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.titulo-favoritos {
+  text-align: center;
+  font-size: 2rem;
+  color: #0c1b3a;
+  margin-bottom: 40px;
+}
+
+.favoritos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.favorito-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.favorito-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.favorito-img img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+.favorito-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.favorito-info h2 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.favorito-info .marca {
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.favorito-info .precio {
+  font-weight: bold;
+  color: #232933;
+    font-size: 1.1rem;
+    margin: 10px 0;
+
+}
+
+.btn-toggle-favorito {
+  background: #f43f5e;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-toggle-favorito:hover {
+  background: #e11d48;
+}
+
+.favoritos-vacio {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.btn-volver {
+  display: inline-block;
+  margin-top: 10px;
+  background: #2f6df6;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-volver:hover {
+  background: #1e50c2;
+}
+
+.volver-container {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.btn-volver-simple {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e5e7eb;
+  color: #111827;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.btn-volver-simple:hover {
+  background: #d1d5db;
+}
+.btn-volver-simple svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}

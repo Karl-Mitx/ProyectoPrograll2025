@@ -16,6 +16,9 @@ urlpatterns = [
     path('accounts/signup/', views_accounts.signup,   name='signup'),
     path('accounts/profile/', views_accounts.profile, name='profile'),
     path('productos/<int:producto_id>/toggle_favorito/', views.toggle_favorito, name='toggle_favorito'),
+    path('favoritos/', views.favoritos_lista, name='favoritos_lista'),
+    path('favoritos/toggle/<int:producto_id>/', views.toggle_favorito, name='toggle_favorito'),
+
 ]
 
 if settings.DEBUG:
