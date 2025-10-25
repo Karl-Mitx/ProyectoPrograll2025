@@ -34,7 +34,7 @@ def pedido_confirmado(request):
         subtotal=0
         iva=0
         total=0
-    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})
+    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})   
 
 
 def lista_productos(request):
@@ -179,15 +179,18 @@ def crear_pedido_desde_carrito(request):
         try:
             data = json.loads(request.body)
             items = data.get('items', [])
+            tipo_pago = data.get('tipo_pago', 'tarjeta')
+            
             for item in items:
                 producto_id = item.get('id')
                 cantidad = item.get('qty', 1)
                 producto = Producto.objects.get(id=producto_id)
+                
                 Pedido.objects.create(
                     cliente=request.user,
                     producto=producto,
                     cantidad=cantidad,
-                    tipo_pago='tarjeta'  # puedes hacerlo dinámico más adelante
+                    tipo_pago=tipo_pago  
                 )
             return JsonResponse({'status': 'ok'})
         except Exception as e:

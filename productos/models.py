@@ -9,6 +9,26 @@ from urllib.parse import urlencode
 def avatar_upload_to(instance, filename):
     return f"avatars/user_{instance.user_id}/{filename}"
 
+class DatosCliente(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    nit = models.CharField(max_length=20)
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=20)
+
+    tipo_pago = models.CharField(max_length=20, choices=Pedido.TIPO_PAGO_CHOICES)
+    tarjeta_numero = models.CharField(max_length=20, blank=True, null=True)
+    tarjeta_codigo = models.CharField(max_length=5, blank=True, null=True)
+    tarjeta_expira = models.CharField(max_length=7, blank=True, null=True)
+    transferencia_autorizacion = models.CharField(max_length=30, blank=True, null=True)
+    transferencia_cuenta = models.CharField(max_length=30, blank=True, null=True)
+
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Datos de {self.nombre} ({self.usuario.username})"
+
+
 TIPO_PAGO_CHOICES = [
         ('tarjeta', 'Tarjeta'),
         ('transferencia', 'Transferencia bancaria'),

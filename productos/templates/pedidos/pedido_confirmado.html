@@ -26,6 +26,9 @@
       <div class="line"><span>IVA (12%)</span><span>Q{{ iva }}</span></div>
       <div class="line total"><strong>Total</strong><strong>Q{{ total }}</strong></div>
     </div>
+    {% if pedido %}
+    <div class="line"><span>Método de pago</span><span>{{ pedido.get_tipo_pago_display }}</span></div>
+    {% endif %}
 
     <div class="drawer__actions" style="margin-top:20px;">
       <a href="{% url 'productos_todos' %}" class="btn primary">Seguir comprando</a>
