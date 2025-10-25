@@ -196,3 +196,17 @@ def crear_pedido_desde_carrito(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@login_required
+def confirmar_datos_cliente(request):
+    if request.method == 'POST':
+        form = DatosClienteForm(request.POST)
+        if form.is_valid():
+            datos = form.save(commit=False)
+            datos.usuario = request.user
+            datos.save()
+            return redirect('pedido_confirmado')
+    else:
+        form = DatosClienteForm(initial={'tipo_pago': 'tarjeta'})
+
+    return render(request, 'pedidos/confirmar_datos_cliente.html', {'form': form})
