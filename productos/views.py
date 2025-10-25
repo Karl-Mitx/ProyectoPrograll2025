@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+#aqui van las vistas de los pedidos
 @login_required
 def crear_pedido(request):
     if request.method == 'POST':
@@ -19,7 +20,21 @@ def crear_pedido(request):
     else:
         form = PedidoForm()
     return render(request, 'pedidos/crear_pedido.html', {'form': form})
-
+@login_required
+def pedido_confirmado(request):
+    pedidos=Pedido.objects.filter(cliente=request.user).order_by('-fecha')
+    ultimo_pedido = pedidos.first()
+    if ultimo_pedido:
+        precio=float(ultimo_pedido.producto.precio)
+        cantidad=int(ultimo_pedido.cantidad)
+        subtotal=precio*cantidad
+        iva=subtotal*0.12
+        total=subtotal+iva
+    else:
+        subtotal=0
+        iva=0
+        total=0
+    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})
 
 
 def lista_productos(request):
@@ -71,8 +86,8 @@ def lista_productos(request):
         productos = productos.order_by('-id')
         
     gamer_products = (Producto.objects
-                      .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
-                      .order_by('-id')[:12])
+                    .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
+                    .order_by('-id')[:12])
 
     carousel_images = CarouselImage.objects.all()
     promo_cards     = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
@@ -116,7 +131,7 @@ def productos_todos(request):
         productos = productos.order_by('-id')
 
     brands = (Producto.objects.order_by('marca')
-              .values_list('marca', flat=True).distinct())
+            .values_list('marca', flat=True).distinct())
 
     return render(request, 'productos/todos.html', {
         'productos': productos,
