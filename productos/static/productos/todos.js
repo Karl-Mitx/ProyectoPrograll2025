@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ajuste para el boton ´pagar´
   checkoutBtn?.addEventListener('click', () => {
+    const metodo = document.getElementById('metodoPago')?.value || 'tarjeta';
     console.log('Checkout clickeado');
     if (cart.length === 0) {
       alert('Tu carrito está vacío.');
