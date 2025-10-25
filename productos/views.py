@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile
+from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido
 from .forms import PedidoForm
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 @login_required
 def crear_pedido(request):
@@ -153,3 +156,25 @@ def toggle_favorito(request, producto_id):
 
         return redirect(request.META.get('HTTP_REFERER', 'productos'))
     return redirect(request.META.get('HTTP_REFERER', 'productos'))
+
+@csrf_exempt
+@login_required
+def crear_pedido_desde_carrito(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            items = data.get('items', [])
+            for item in items:
+                producto_id = item.get('id')
+                cantidad = item.get('qty', 1)
+                producto = Producto.objects.get(id=producto_id)
+                Pedido.objects.create(
+                    cliente=request.user,
+                    producto=producto,
+                    cantidad=cantidad,
+                    tipo_pago='tarjeta'  # puedes hacerlo dinámico más adelante
+                )
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
