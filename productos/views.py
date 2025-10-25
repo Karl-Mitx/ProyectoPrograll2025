@@ -2,6 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile
+from .forms import PedidoForm
+
+@login_required
+def crear_pedido(request):
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save(commit=False)
+            pedido.cliente = request.user
+            pedido.save()
+            return redirect('pedido_confirmado')  
+    else:
+        form = PedidoForm()
+    return render(request, 'pedidos/crear_pedido.html', {'form': form})
+
+
 
 def lista_productos(request):
     productos = Producto.objects.all()
