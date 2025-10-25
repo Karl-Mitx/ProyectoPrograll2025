@@ -9,6 +9,24 @@ from urllib.parse import urlencode
 def avatar_upload_to(instance, filename):
     return f"avatars/user_{instance.user_id}/{filename}"
 
+class Pedido(models.Model):
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pedidos', null=True)
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    TIPO_PAGO_CHOICES = [
+        ('tarjeta', 'Tarjeta'),
+        ('transferencia', 'Transferencia'),
+        ('contra_entrega', 'Pago contra entrega'),
+    ]
+    tipo_pago = models.CharField(max_length=20, choices=TIPO_PAGO_CHOICES)
+
+    enviado = models.BooleanField(default=False)
+    recibido = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.cliente.username}"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")

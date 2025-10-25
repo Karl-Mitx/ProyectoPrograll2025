@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from .views import crear_pedido, crear_pedido_desde_carrito, pedido_confirmado
 
 from . import views
 from . import views_accounts
@@ -18,6 +19,10 @@ urlpatterns = [
     path('productos/<int:producto_id>/toggle_favorito/', views.toggle_favorito, name='toggle_favorito'),
     path('favoritos/', views.favoritos_lista, name='favoritos_lista'),
     path('favoritos/toggle/<int:producto_id>/', views.toggle_favorito, name='toggle_favorito'),
+    path('pedido/nuevo/', crear_pedido, name='crear_pedido'),
+    path('pedido/crear-desde-carrito/', crear_pedido_desde_carrito, name='crear_pedido_desde_carrito'),
+    path('pedido/confirmado/', pedido_confirmado, name='pedido_confirmado'),
+
 
 ]
 

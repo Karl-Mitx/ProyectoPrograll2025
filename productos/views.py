@@ -1,7 +1,41 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile
+from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido
+from .forms import PedidoForm
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+#aqui van las vistas de los pedidos
+@login_required
+def crear_pedido(request):
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save(commit=False)
+            pedido.cliente = request.user
+            pedido.save()
+            return redirect('pedido_confirmado')  
+    else:
+        form = PedidoForm()
+    return render(request, 'pedidos/crear_pedido.html', {'form': form})
+@login_required
+def pedido_confirmado(request):
+    pedidos=Pedido.objects.filter(cliente=request.user).order_by('-fecha')
+    ultimo_pedido = pedidos.first()
+    if ultimo_pedido:
+        precio=float(ultimo_pedido.producto.precio)
+        cantidad=int(ultimo_pedido.cantidad)
+        subtotal=precio*cantidad
+        iva=subtotal*0.12
+        total=subtotal+iva
+    else:
+        subtotal=0
+        iva=0
+        total=0
+    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})
+
 
 def lista_productos(request):
     productos = Producto.objects.all()
@@ -52,8 +86,8 @@ def lista_productos(request):
         productos = productos.order_by('-id')
         
     gamer_products = (Producto.objects
-                      .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
-                      .order_by('-id')[:12])
+                    .filter(categoria__in=['Consola', 'Videojuego', 'Gaming'])
+                    .order_by('-id')[:12])
 
     carousel_images = CarouselImage.objects.all()
     promo_cards     = PromoCard.objects.filter(activo=True).order_by('orden')[:6]
@@ -97,7 +131,7 @@ def productos_todos(request):
         productos = productos.order_by('-id')
 
     brands = (Producto.objects.order_by('marca')
-              .values_list('marca', flat=True).distinct())
+            .values_list('marca', flat=True).distinct())
 
     return render(request, 'productos/todos.html', {
         'productos': productos,
@@ -137,3 +171,25 @@ def toggle_favorito(request, producto_id):
 
         return redirect(request.META.get('HTTP_REFERER', 'productos'))
     return redirect(request.META.get('HTTP_REFERER', 'productos'))
+
+@csrf_exempt
+@login_required
+def crear_pedido_desde_carrito(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            items = data.get('items', [])
+            for item in items:
+                producto_id = item.get('id')
+                cantidad = item.get('qty', 1)
+                producto = Producto.objects.get(id=producto_id)
+                Pedido.objects.create(
+                    cliente=request.user,
+                    producto=producto,
+                    cantidad=cantidad,
+                    tipo_pago='tarjeta'  # puedes hacerlo dinámico más adelante
+                )
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Método no permitido'}, status=405)

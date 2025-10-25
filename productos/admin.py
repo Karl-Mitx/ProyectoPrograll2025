@@ -4,6 +4,14 @@ from .models import CarouselImage
 from .models import PromoCard
 from .models import PromoPill
 from .models import Profile
+from .models import Pedido
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'producto', 'cantidad', 'tipo_pago', 'fecha', 'enviado', 'recibido')
+    list_filter = ('tipo_pago', 'enviado', 'recibido', 'fecha')
+    search_fields = ('cliente__username', 'producto__nombre')
+    list_editable = ('enviado', 'recibido')
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
