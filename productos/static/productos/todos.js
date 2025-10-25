@@ -129,3 +129,29 @@
   });
 
   renderCart();
+const checkoutBtn = document.getElementById('checkout');
+checkoutBtn?.addEventListener('click', () => {
+  if (cart.length === 0) {
+    alert('Tu carrito está vacío.');
+    return;
+  }
+
+  fetch('/pedido/crear-desde-carrito/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCSRFToken(), 
+    },
+    body: JSON.stringify({ items: cart })
+  })
+  .then(response => {
+    if (response.ok) {
+      cart = [];
+      guardarCarrito();
+      renderCart();
+      window.location.href = '/pedido/confirmado/';
+    } else {
+      alert('Error al procesar el pedido.');
+    }
+  });
+});
