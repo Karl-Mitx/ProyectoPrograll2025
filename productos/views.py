@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido
+from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido, DatosCliente
 from .forms import PedidoForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -20,10 +20,14 @@ def crear_pedido(request):
     else:
         form = PedidoForm()
     return render(request, 'pedidos/crear_pedido.html', {'form': form})
+
 @login_required
 def pedido_confirmado(request):
     pedidos=Pedido.objects.filter(cliente=request.user).order_by('-fecha')
     ultimo_pedido = pedidos.first()
+    
+    datos = DatosCliente.objects.filter(usuario=request.user).order_by('-fecha').first()
+    
     if ultimo_pedido:
         precio=float(ultimo_pedido.producto.precio)
         cantidad=int(ultimo_pedido.cantidad)
@@ -34,7 +38,7 @@ def pedido_confirmado(request):
         subtotal=0
         iva=0
         total=0
-    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})   
+    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total, 'datos': datos})   
 
 
 def lista_productos(request):
@@ -209,4 +213,4 @@ def confirmar_datos_cliente(request):
     else:
         form = DatosClienteForm(initial={'tipo_pago': 'tarjeta'})
 
-    return render(request, 'pedidos/confirmar_datos_cliente.html', {'form': form})
+    return render(request, 'pedidos/confirmar_datos_cliente.html', {'form': form})  
