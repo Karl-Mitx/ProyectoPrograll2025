@@ -10,7 +10,7 @@ def avatar_upload_to(instance, filename):
     return f"avatars/user_{instance.user_id}/{filename}"
 
 class Pedido(models.Model):
-    cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pedidos')
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pedidos', null=True)
     producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
     fecha = models.DateTimeField(auto_now_add=True)
