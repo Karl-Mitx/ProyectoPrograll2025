@@ -1,7 +1,17 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Pedido
+from .models import Pedido, DatosCliente
+
+class DatosClienteForm(forms.ModelForm):
+    class Meta:
+        model = DatosCliente
+        fields = [
+            'nombre', 'nit', 'direccion', 'telefono',
+            'tipo_pago',
+            'tarjeta_numero', 'tarjeta_codigo', 'tarjeta_expira',
+            'transferencia_autorizacion', 'transferencia_cuenta',
+        ]
 
 class PedidoForm(forms.ModelForm):
     class Meta:

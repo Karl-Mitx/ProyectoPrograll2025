@@ -294,6 +294,14 @@
     <div class="line"><span>Subtotal</span><span id="subtotal">Q0.00</span></div>
     <div class="line"><span>IVA (12%)</span><span id="iva">Q0.00</span></div>
     <div class="line"><strong>Total</strong><strong id="total">Q0.00</strong></div>
+    <div class="control" style="margin-top:12px;">
+      <label for="metodoPago" style="display:block;margin-bottom:6px;">Método de pago:</label>
+      <select id="metodoPago" class="form-control" style="width:100%;padding:6px;">
+        <option value="tarjeta">💳 Tarjeta</option>
+        <option value="transferencia">🏦 Transferencia bancaria</option>
+        <option value="efectivo">💵 Efectivo contra entrega</option>
+      </select>
+    </div>
     <div style="margin-top:10px;display:flex;gap:8px;">
       <button id="clearCart" class="btn ghost" style="flex:1;">Vaciar</button>
       <button id="checkout" class="btn eco" style="flex:1;">Pagar</button>

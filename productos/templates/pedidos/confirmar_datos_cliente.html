@@ -1,0 +1,37 @@
+<form method="post">
+  {% csrf_token %}
+  {{ form.nombre.label }} {{ form.nombre }}
+  {{ form.nit.label }} {{ form.nit }}
+  {{ form.direccion.label }} {{ form.direccion }}
+  {{ form.telefono.label }} {{ form.telefono }}
+
+  {{ form.tipo_pago.label }} {{ form.tipo_pago }}
+
+  <div id="tarjeta">
+    {{ form.tarjeta_numero.label }} {{ form.tarjeta_numero }}
+    {{ form.tarjeta_codigo.label }} {{ form.tarjeta_codigo }}
+    {{ form.tarjeta_expira.label }} {{ form.tarjeta_expira }}
+  </div>
+
+  <div id="transferencia">
+    {{ form.transferencia_autorizacion.label }} {{ form.transferencia_autorizacion }}
+    {{ form.transferencia_cuenta.label }} {{ form.transferencia_cuenta }}
+  </div>
+
+  <button type="submit">Confirmar datos</button>
+</form>
+
+<script>
+  const tipoPago = document.getElementById('id_tipo_pago');
+  const tarjeta = document.getElementById('tarjeta');
+  const transferencia = document.getElementById('transferencia');
+
+  function actualizarCampos() {
+    const tipo = tipoPago.value;
+    tarjeta.style.display = tipo === 'tarjeta' ? 'block' : 'none';
+    transferencia.style.display = tipo === 'transferencia' ? 'block' : 'none';
+  }
+
+  tipoPago.addEventListener('change', actualizarCampos);
+  actualizarCampos();
+</script>

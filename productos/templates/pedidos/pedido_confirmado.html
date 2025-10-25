@@ -26,7 +26,29 @@
       <div class="line"><span>IVA (12%)</span><span>Q{{ iva }}</span></div>
       <div class="line total"><strong>Total</strong><strong>Q{{ total }}</strong></div>
     </div>
+    {% if pedido %}
+    <div class="line"><span>Método de pago</span><span>{{ pedido.get_tipo_pago_display }}</span></div>
+    {% endif %}
 
+    {% if datos %}
+    <div class="drawer__footer" style="margin-top:20px;">
+    <h3 style="margin-bottom:10px;">Datos del cliente</h3>
+    <div class="line"><span>Nombre</span><span>{{ datos.nombre }}</span></div>
+    <div class="line"><span>NIT</span><span>{{ datos.nit }}</span></div>
+    <div class="line"><span>Dirección</span><span>{{ datos.direccion }}</span></div>
+    <div class="line"><span>Teléfono</span><span>{{ datos.telefono }}</span></div>
+    <div class="line"><span>Método de pago</span><span>{{ datos.get_tipo_pago_display }}</span></div>
+
+    {% if datos.tipo_pago == 'tarjeta' %}
+      <div class="line"><span>Tarjeta</span><span>****{{ datos.tarjeta_numero|slice:"-4:" }}</span></div>
+      <div class="line"><span>Expira</span><span>{{ datos.tarjeta_expira }}</span></div>
+    {% elif datos.tipo_pago == 'transferencia' %}
+      <div class="line"><span>Autorización</span><span>{{ datos.transferencia_autorizacion }}</span></div>
+      <div class="line"><span>Cuenta origen</span><span>{{ datos.transferencia_cuenta }}</span></div>
+    {% endif %}
+    </div>
+    {% endif %}
+    
     <div class="drawer__actions" style="margin-top:20px;">
       <a href="{% url 'productos_todos' %}" class="btn primary">Seguir comprando</a>
     </div>

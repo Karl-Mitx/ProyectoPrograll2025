@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido
+from .models import Producto, CarouselImage, PromoCard, PromoPill, Profile, Pedido, DatosCliente
 from .forms import PedidoForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -20,10 +20,14 @@ def crear_pedido(request):
     else:
         form = PedidoForm()
     return render(request, 'pedidos/crear_pedido.html', {'form': form})
+
 @login_required
 def pedido_confirmado(request):
     pedidos=Pedido.objects.filter(cliente=request.user).order_by('-fecha')
     ultimo_pedido = pedidos.first()
+    
+    datos = DatosCliente.objects.filter(usuario=request.user).order_by('-fecha').first()
+    
     if ultimo_pedido:
         precio=float(ultimo_pedido.producto.precio)
         cantidad=int(ultimo_pedido.cantidad)
@@ -34,7 +38,7 @@ def pedido_confirmado(request):
         subtotal=0
         iva=0
         total=0
-    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total})
+    return render(request, 'pedidos/pedido_confirmado.html', {'pedido': ultimo_pedido, 'subtotal': subtotal, 'iva': iva, 'total': total, 'datos': datos})   
 
 
 def lista_productos(request):
@@ -179,17 +183,34 @@ def crear_pedido_desde_carrito(request):
         try:
             data = json.loads(request.body)
             items = data.get('items', [])
+            tipo_pago = data.get('tipo_pago', 'tarjeta')
+            
             for item in items:
                 producto_id = item.get('id')
                 cantidad = item.get('qty', 1)
                 producto = Producto.objects.get(id=producto_id)
+                
                 Pedido.objects.create(
                     cliente=request.user,
                     producto=producto,
                     cantidad=cantidad,
-                    tipo_pago='tarjeta'  # puedes hacerlo dinámico más adelante
+                    tipo_pago=tipo_pago  
                 )
             return JsonResponse({'status': 'ok'})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@login_required
+def confirmar_datos_cliente(request):
+    if request.method == 'POST':
+        form = DatosClienteForm(request.POST)
+        if form.is_valid():
+            datos = form.save(commit=False)
+            datos.usuario = request.user
+            datos.save()
+            return redirect('pedido_confirmado')
+    else:
+        form = DatosClienteForm(initial={'tipo_pago': 'tarjeta'})
+
+    return render(request, 'pedidos/confirmar_datos_cliente.html', {'form': form})  
