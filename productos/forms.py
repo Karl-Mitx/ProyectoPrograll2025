@@ -1,6 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Pedido
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['producto', 'cantidad', 'tipo_pago']
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(required=False, label="Nombre")
