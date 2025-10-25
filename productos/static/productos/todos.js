@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
         'X-CSRFToken': getCSRFToken(),
       },
-      body: JSON.stringify({ items: cart })
+      body: JSON.stringify({ items: cart, tipo_pago: metodo }),
     })
     .then(response => {
       if (response.ok) {
